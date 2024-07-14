@@ -2,8 +2,7 @@ from youtube_transcript_api import YouTubeTranscriptApi
 import google.generativeai as genai
 import streamlit as st
 import os
-API_KEY = os.getenv("APIKEY")
-print(API_KEY)
+API_KEY = st.secrets["APIKEY"]
 genai.configure(api_key=API_KEY)
 model = genai.GenerativeModel('gemini-1.5-pro-latest')
 
