@@ -1,23 +1,39 @@
 from youtube_transcript_api import YouTubeTranscriptApi
 import google.generativeai as genai
-
-
-# get the transcript
-video_url = "https://www.youtube.com/watch?v=JeVDjExBf7Y"
-video_id = video_url.split("=")[1]
-
-transcript  = YouTubeTranscriptApi.get_transcript(video_id)
-
-text = ""
-for i in transcript:
-    text += i['text'] 
-    text += " "
-
-# generating the summary
+import streamlit as st
 API_KEY = "AIzaSyDeY5mj-bmzj3ONfXw7qf1QejjNJW6QwW4"
 genai.configure(api_key=API_KEY)
-
 model = genai.GenerativeModel('gemini-1.5-pro-latest')
 
-response = model.generate_content(f"Summarize the following transcript in an organized manner hello: {text}")
-print(response.text)
+
+def fetch_transcript(link):
+    # get the transcript
+    video_id = link.split("=")[1]
+    transcript  = YouTubeTranscriptApi.get_transcript(video_id)
+
+    text = ""
+    for i in transcript:
+        text += i['text'] 
+        text += " "
+
+    return text
+
+def summary(text):
+    # generating the summary
+    response = model.generate_content(f"Summarize the following transcript in an bullets short and crisp, do not mention advertisements: {text}")
+    return response.text
+
+
+
+st.title('Youtube Video Summariser 2024')
+
+title = st.text_input("Enter video link")
+    
+
+if st.button("summary"):
+    st.video(title)
+    text = fetch_transcript(title)
+    oui = summary(text)
+    st.write("Summary of the video: ", oui)
+ 
+
